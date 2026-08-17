@@ -8,9 +8,6 @@ st.set_page_config(page_title="Graph Generator", layout="wide")
 
 st.title("📊 Advanced Graph Generator")
 
-# =========================
-# FILE UPLOAD
-# =========================
 file = st.file_uploader("Upload CSV", type=["csv"])
 
 if file:
@@ -19,15 +16,9 @@ if file:
     st.subheader("Preview Data")
     st.dataframe(df)
 
-    # =========================
-    # COLUMN DETECTION
-    # =========================
     all_columns = df.columns.tolist()
     numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
 
-    # =========================
-    # X AXIS SETTINGS
-    # =========================
     st.sidebar.header("X-Axis Settings")
 
     x_mode = st.sidebar.radio(
@@ -68,9 +59,6 @@ if file:
 
     df["DATETIME"] = datetime_col
 
-    # =========================
-    # GRAPH SETTINGS
-    # =========================
     st.sidebar.header("Graph Settings")
 
     graph_type = st.sidebar.selectbox(
@@ -90,9 +78,6 @@ if file:
 
     log_scale = st.sidebar.checkbox("Log Scale (Primary Axis)")
 
-    # =========================
-    # DUAL AXIS ASSIGNMENT
-    # =========================
     left_cols = []
     right_cols = []
 
@@ -113,9 +98,6 @@ if file:
     else:
         left_cols = selected_cols
 
-    # =========================
-    # HEATMAP MODE
-    # =========================
     if graph_type == "Heatmap":
         st.subheader("🔥 Heatmap View")
 
@@ -140,9 +122,7 @@ if file:
             st.plotly_chart(fig, use_container_width=True)
 
     elif graph_type == ["Line", "Scatter", "Bar"]:
-        # =========================
-        # CREATE FIGURE
-        # =========================
+
         fig = make_subplots(specs=[[{"secondary_y": True}]])
 
         # --- LEFT AXIS ---
@@ -164,7 +144,6 @@ if file:
                                     name=col),
                               secondary_y=False)
 
-        # --- RIGHT AXIS ---
         for col in right_cols:
             if graph_type == "Line":
                 fig.add_trace(go.Scatter(x=df["DATETIME"], y=df[col],
@@ -183,9 +162,6 @@ if file:
                                     name=col),
                               secondary_y=True)
 
-        # =========================
-        # LAYOUT
-        # =========================
         fig.update_layout(
             height=600,
             legend=dict(orientation="h"),
@@ -200,9 +176,6 @@ if file:
 
         st.plotly_chart(fig, use_container_width=True)
 
-    # =========================
-    # EXPORT
-    # =========================
     st.subheader("Export")
 
     if st.button("Download HTML"):
